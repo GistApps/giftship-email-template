@@ -24,14 +24,18 @@ START: Giftship multi-address order modifications
     Uncomment this block to use the original product variant images instead of the placeholders added in the multi-address process.
     If you do this, you will need to also modify the image line that is a child of each non_parent_line_items to look as follows:
 
+    {% endcomment %}
+
     <!-- Original <img src="{{ line.image | img_url: 'compact_cropped'  }}" ... /> -->
     <!-- Modified <img src="{{ line.image.src }}" ... /> -->
-    {% endcomment %}
+    
     {%- assign overridden_image = line.properties._gs_image | default: false -%}
 
     {% if overridden_image %}
       {% assign overridden_image = null | default: src: overridden_image %}
     {% endif %}
+    
+    
 
     {% if line.variant.title == "Tax" %}
       {% assign tax_price = line.final_line_price %}
@@ -65,7 +69,7 @@ START: Giftship multi-address order modifications
     {% unless p.first.first == "_" %}
       <span>{{ p.first }}</span>: <span>{{ p.last }}</span><br/>
     {% endunless %}
-  {% endfor %}}
+  {% endfor %}
 
   Leave this comment block intact to help you find it again in the future.
 {% endcomment %}
@@ -88,7 +92,6 @@ END: Giftship multi-address order modifications
     Thank you for your purchase!
   {% endif %}
 {% endcapture %}
-
 {% capture email_body %}
   {% if has_pending_payment %}
     {% if buyer_action_required %}
@@ -996,7 +999,7 @@ END: Giftship multi-address order modifications
               {% if false and is_parent %}
                 <td class="order-list__parent-image-cell {{ css_order_list_parent_image_cell_nested_line_parent_class }}">
                   {% if line.image %}
-                    <img src="{{ line | img_url: 'compact_cropped' }}" align="left" width="60" height="60" class="order-list__product-image"/>
+                    <img src="{{ line.image.src }}" align="left" width="60" height="60" class="order-list__product-image"/>
                   {% else %}
                     <div class="order-list__no-image-cell">
                       <img src="{{ 'notifications/no-image.png' | shopify_asset_url }}" align="left" class="order-list__no-product-image"/>
@@ -1051,11 +1054,7 @@ END: Giftship multi-address order modifications
           {% endif %}
 
           <span class="order-list__item-title">{{ line_title }}&nbsp;&times;&nbsp;{{ line_display }}</span><br/>
-          {% for p,v in line.properties %}
-            {% unless p.first == "_" %}
-              <span>{{ p }}</span>: <span>{{ v }}</span><br/>
-            {% endunless %}
-          {% endfor %}
+
           {% if line.variant.title != 'Default Title' and is_parent == false %}
             <span class="order-list__item-variant">{{ line.variant.title }}</span><br/>
           {% elsif line.variant.title != 'Default Title' and line.nested_line_parent? %}
@@ -2297,7 +2296,7 @@ END: Giftship multi-address order modifications
               {% if false and is_parent %}
                 <td class="order-list__parent-image-cell {{ css_order_list_parent_image_cell_nested_line_parent_class }}">
                   {% if line.image %}
-                    <img src="{{ line.image.src }}" align="left" width="60" height="60" class="order-list__product-image"/>
+                    <img src="{{ line | img_url: 'compact_cropped' }}" align="left" width="60" height="60" class="order-list__product-image"/>
                   {% else %}
                     <div class="order-list__no-image-cell">
                       <img src="{{ 'notifications/no-image.png' | shopify_asset_url }}" align="left" class="order-list__no-product-image"/>
@@ -2360,7 +2359,12 @@ END: Giftship multi-address order modifications
           {% elsif line.variant.title != 'Default Title' and line.bundle_parent? and false == false %}
             <span class="order-list__item-variant">{{ line.variant.title }}</span><br/>
           {% endif %}
-
+          {% for p in line.properties %}
+            {% unless p.first.first == "_" %}
+              <span>{{ p.first }}</span>: <span>{{ p.last }}</span><br/>
+            {% endunless %}
+          {% endfor %}
+          
           {% if false %}
             {% for child_line in line.bundle_components %}
               
