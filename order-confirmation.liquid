@@ -13,6 +13,8 @@ START: Giftship multi-address order modifications
 
 {% if ms_order %}
 
+  {%- assign order_status_url = shop.url | append: '/account/' -%}
+
   {%- assign new_non_parent_line_items = null | sort -%}
 
   {%- for line in non_parent_line_items -%}
