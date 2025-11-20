@@ -2308,7 +2308,7 @@ END: Giftship multi-address order modifications
               {% else %}
                 <td class="order-list__image-cell">
                   {% if line.image %}
-                    <img src="{{ line | img_url: 'compact_cropped' }}" align="left" width="60" height="60" class="order-list__product-image"/>
+                    <img src="{{ line.image.src }}" align="left" width="60" height="60" class="order-list__product-image"/>
                   {% else %}
                     <div class="order-list__no-image-cell">
                       <img src="{{ 'notifications/no-image.png' | shopify_asset_url }}" align="left" width="60" height="60" class="order-list__no-product-image"/>
