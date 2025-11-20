@@ -25,12 +25,12 @@ START: Giftship multi-address order modifications
 
     Uncomment this block to use the original product variant images instead of the placeholders added in the multi-address process.
     If you do this, you will need to also modify the image line that is a child of each non_parent_line_items to look as follows:
-
-    {% endcomment %}
-
     <!-- Original <img src="{{ line.image | img_url: 'compact_cropped'  }}" ... /> -->
     <!-- Modified <img src="{{ line.image.src }}" ... /> -->
     
+    {% endcomment %}
+
+ 
     {%- assign overridden_image = line.properties._gs_image | default: false -%}
 
     {% if overridden_image %}
