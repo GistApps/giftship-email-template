@@ -20,6 +20,7 @@ START: Giftship multi-address order modifications
   {%- for line in non_parent_line_items -%}
 
     {% assign overridden_image = line.image %}
+    {% assign overridden_title = line.title %}
 
     {% comment %}
 
@@ -33,10 +34,13 @@ START: Giftship multi-address order modifications
  
     {%- assign overridden_image = line.properties._gs_image | default: false -%}
 
+    {%- assign overridden_title = line.properties._gs_title | default: overridden_title -%}
+
+    
+
     {% if overridden_image %}
       {% assign overridden_image = null | default: src: overridden_image %}
     {% endif %}
-    
     
 
     {% if line.variant.title == "Tax" %}
@@ -49,7 +53,7 @@ START: Giftship multi-address order modifications
       {% continue %}
     {% endif %}
 
-    {%  assign item_json = null | default: key: line.key, groups: line.groups, title: line.title, quantity: line.quantity, original_line_price: line.original_line_price, final_line_price: line.final_line_price, image: overridden_image, delivery_agreement: line.delivery_agreement, nested_line_child: line.nested_line_child, nested_line_parent: line.nested_line_parent, bundle_parent: line.bundle_parent, presentment_title: line.presentment_title, product: line.product, variant: line.variant, bundle_components: line.bundle_components, properties: line.properties, gift_card: line.gift_card, selling_plan_allocation: line.selling_plan_allocation, refunded_quantity: line.refunded_quantity, discount_allocations: line.discount_allocations, unit_price_measurement: line.unit_price_measurement, unit_price: line.unit_price, nested_lines: line.nested_lines %}
+    {%  assign item_json = null | default: key: line.key, groups: line.groups, title: overridden_title, quantity: line.quantity, original_line_price: line.original_line_price, final_line_price: line.final_line_price, image: overridden_image, delivery_agreement: line.delivery_agreement, nested_line_child: line.nested_line_child, nested_line_parent: line.nested_line_parent, bundle_parent: line.bundle_parent, presentment_title: overridden_title, product: line.product, variant: line.variant, bundle_components: line.bundle_components, properties: line.properties, gift_card: line.gift_card, selling_plan_allocation: line.selling_plan_allocation, refunded_quantity: line.refunded_quantity, discount_allocations: line.discount_allocations, unit_price_measurement: line.unit_price_measurement, unit_price: line.unit_price, nested_lines: line.nested_lines %}
     {%  assign temp_single_object_array = item_json | sort %}
     {%- assign new_non_parent_line_items = new_non_parent_line_items | concat: temp_single_object_array -%}
     
@@ -2308,7 +2312,7 @@ END: Giftship multi-address order modifications
               {% else %}
                 <td class="order-list__image-cell">
                   {% if line.image %}
-                    <img src="{{ line.image.src }}" align="left" width="60" height="60" class="order-list__product-image"/>
+                    <img src="{% if ms_order %}{{ line.image.src }}{% else %}{{ line.image | img_url: 'compact_cropped' }}{% endif %}" align="left" width="60" height="60" class="order-list__product-image"/>
                   {% else %}
                     <div class="order-list__no-image-cell">
                       <img src="{{ 'notifications/no-image.png' | shopify_asset_url }}" align="left" width="60" height="60" class="order-list__no-product-image"/>
