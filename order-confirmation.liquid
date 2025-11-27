@@ -45,6 +45,31 @@ START: Giftship multi-address order modifications
 
     {% if line.variant.title == "Tax" %}
       {% assign tax_price = line.final_line_price %}
+
+      {% comment %}
+      If taxes are included in your product prices, uncomment the below block of code.
+      {% endcomment %}
+
+      {% comment %}
+
+      {% assign has_taxes_included = false %}
+      {% assign line_properties_tax = 0 %}
+    
+      {% for p in line.properties %}
+        {% if p.name == "Taxes included" %}
+          {% assign has_taxes_included = true %}
+        {% else %}
+          {% assign line_property_tax_value = p.value time: 1 %}
+          {% assign line_properties_tax = line_properties_tax | plus: line_property_tax_value %}
+        {% endif %}
+      {% endfor %}
+    
+      {% if has_taxes_included and line_properties_tax > 0 %}
+        {% assign tax_price = line_properties_tax %}
+      {% endif %}
+
+      {% endcomment %}
+
       {% continue %}
     {% endif %}
 
