@@ -237,6 +237,7 @@ END: Giftship multi-address order modifications
         <td style="padding-bottom: 0px;">
           <table height="100%">
             <tr valign="top">
+              {% comment %} START: Giftship Image Override {% endcomment %}
               {% if true and is_parent %}
                 <td class="order-list__parent-image-cell {{ css_order_list_parent_image_cell_nested_line_parent_class }}">
                   {% if line.image %}
@@ -258,6 +259,7 @@ END: Giftship multi-address order modifications
                   {% endif %}
                 </td>
               {% endif %}
+              {% comment %} END: Giftship Image Override {% endcomment %}
             </tr>
             {% if is_nested_line_parent %}
               <tr height="100%">
@@ -304,6 +306,7 @@ END: Giftship multi-address order modifications
           {% endfor %}
           {% comment %} END: Giftship Title and Address {% endcomment %}
 
+          {% comment %} START: Giftship Variant Hide {% endcomment %}
           {% unless ms_order %}
           {% if line.variant.title != 'Default Title' and is_parent == false %}
             <span class="order-list__item-variant">{{ line.variant.title }}</span><br/>
@@ -313,6 +316,7 @@ END: Giftship multi-address order modifications
             <span class="order-list__item-variant">{{ line.variant.title }}</span><br/>
           {% endif %}
           {% endunless %}
+          {% comment %} END: Giftship Variant Hide {% endcomment %}
 
           {% if true %}
             {% for child_line in line.bundle_components %}
@@ -562,7 +566,13 @@ END: Giftship multi-address order modifications
   {% endif %}
 {% endfor %}
 
-
+{% comment %} START: Giftship Subtotal Correction {% endcomment %}
+{% assign corrected_subtotal_price = subtotal_price %}
+{% if ms_order %}
+  {% assign gs_tax = tax_price | default: 0 %}
+  {% assign gs_shipping = shipping_price | default: 0 %}
+  {% assign corrected_subtotal_price = subtotal_price | minus: gs_tax | minus: gs_shipping %}
+{% endif %}
 
 <tr class="subtotal-line">
   <td class="subtotal-line__title">
@@ -571,11 +581,10 @@ END: Giftship multi-address order modifications
     </p>
   </td>
   <td class="subtotal-line__value">
-      <strong>{{ subtotal_price | plus: subtotal_order_amount | money }}</strong>
+      <strong>{{ corrected_subtotal_price | plus: subtotal_order_amount | money }}</strong>
   </td>
 </tr>
-
-
+{% comment %} END: Giftship Subtotal Correction {% endcomment %}
 
 {% if order_discount_count > 0 %}
   {% if order_discount_count == 1 %}
